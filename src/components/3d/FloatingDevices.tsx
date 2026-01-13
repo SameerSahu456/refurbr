@@ -1,6 +1,6 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Environment, MeshDistortMaterial, Sphere, Box } from "@react-three/drei";
+import { Float, Environment, Sphere } from "@react-three/drei";
 import * as THREE from "three";
 
 const FloatingLaptop = ({ position, rotation, scale = 1 }: { 
@@ -47,11 +47,8 @@ const GlowingSphere = ({ position, color, size = 1 }: {
   return (
     <Float speed={3} rotationIntensity={0.3} floatIntensity={2}>
       <Sphere args={[size, 32, 32]} position={position}>
-        <MeshDistortMaterial
+        <meshStandardMaterial
           color={color}
-          attach="material"
-          distort={0.4}
-          speed={2}
           roughness={0.2}
           metalness={0.8}
           opacity={0.7}
@@ -65,7 +62,7 @@ const GlowingSphere = ({ position, color, size = 1 }: {
 const ParticleField = () => {
   const particles = useMemo(() => {
     const temp = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
       const x = (Math.random() - 0.5) * 20;
       const y = (Math.random() - 0.5) * 20;
       const z = (Math.random() - 0.5) * 20;
@@ -77,12 +74,10 @@ const ParticleField = () => {
   return (
     <>
       {particles.map((particle, i) => (
-        <Float key={i} speed={1} floatIntensity={0.5}>
-          <mesh position={particle.position}>
-            <sphereGeometry args={[0.02, 8, 8]} />
-            <meshBasicMaterial color="#25afd0" opacity={0.5} transparent />
-          </mesh>
-        </Float>
+        <mesh key={i} position={particle.position}>
+          <sphereGeometry args={[0.03, 8, 8]} />
+          <meshBasicMaterial color="#25afd0" opacity={0.6} transparent />
+        </mesh>
       ))}
     </>
   );
@@ -91,7 +86,7 @@ const ParticleField = () => {
 const Scene = () => {
   return (
     <>
-      <ambientLight intensity={0.3} />
+      <ambientLight intensity={0.4} />
       <pointLight position={[10, 10, 10]} intensity={1} color="#25afd0" />
       <pointLight position={[-10, -10, -10]} intensity={0.5} color="#1a8fa8" />
       <spotLight position={[0, 10, 0]} intensity={0.8} angle={0.5} penumbra={1} color="#ffffff" />
@@ -113,14 +108,16 @@ const Scene = () => {
 
 export const FloatingDevices = () => {
   return (
-    <div className="absolute inset-0 z-0">
+    <div className="absolute inset-0 z-0 pointer-events-none">
       <Canvas
         camera={{ position: [0, 0, 8], fov: 50 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent" }}
       >
-        <Scene />
+        <Suspense fallback={null}>
+          <Scene />
+        </Suspense>
       </Canvas>
     </div>
   );

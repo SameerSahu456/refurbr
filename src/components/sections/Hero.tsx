@@ -2,12 +2,9 @@ import { motion } from "framer-motion";
 import { ArrowRight, Search, Shield, Truck, Award, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RefurbrLogo } from "@/components/brand/RefurbrLogo";
-import { Suspense, lazy } from "react";
+import { FloatingDevices } from "@/components/3d/FloatingDevices";
+import { Suspense } from "react";
 import heroLaptop from "@/assets/hero-laptop.png";
-
-const FloatingDevices = lazy(() => 
-  import("@/components/3d/FloatingDevices").then(module => ({ default: module.FloatingDevices }))
-);
 
 const suggestedSearches = [
   "MacBook Pro M1",
@@ -41,7 +38,7 @@ export const Hero = () => {
           backgroundPosition: ["0px 0px", "20px 20px"],
         }}
         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-20 pointer-events-none"
         style={{
           backgroundImage: `
             linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
