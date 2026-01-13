@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, Star, ShoppingCart, ArrowRight } from "lucide-react";
+import { Heart, Star, ShoppingCart, ArrowRight, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const products = [
@@ -14,6 +14,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80",
     badge: "Best Seller",
     condition: "Excellent",
+    discount: 35,
   },
   {
     id: 2,
@@ -26,6 +27,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80",
     badge: "Top Deal",
     condition: "Like New",
+    discount: 44,
   },
   {
     id: 3,
@@ -38,6 +40,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=600&q=80",
     badge: null,
     condition: "Excellent",
+    discount: 33,
   },
   {
     id: 4,
@@ -50,6 +53,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&q=80",
     badge: "50% Off",
     condition: "Good",
+    discount: 50,
   },
 ];
 
@@ -72,8 +76,17 @@ const cardVariants = {
 
 export const FeaturedProducts = () => {
   return (
-    <section className="py-20 bg-secondary/30">
-      <div className="container mx-auto px-6">
+    <section className="py-24 bg-secondary/30 relative overflow-hidden">
+      {/* Decorative Grid */}
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--primary) / 0.1) 1px, transparent 0)`,
+          backgroundSize: "40px 40px",
+        }}
+      />
+
+      <div className="container mx-auto px-6 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -83,17 +96,25 @@ export const FeaturedProducts = () => {
           className="flex flex-col md:flex-row md:items-end justify-between mb-12"
         >
           <div>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
+            <motion.span
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6"
+            >
+              Hand-Picked Selection
+            </motion.span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-4">
               Featured Products
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl">
-              Hand-picked devices, certified and ready for their next chapter
+              Certified devices ready for their next chapter
             </p>
           </div>
           <motion.a
             href="#"
             whileHover={{ x: 5 }}
-            className="flex items-center gap-2 text-primary font-semibold mt-4 md:mt-0 group"
+            className="flex items-center gap-2 text-primary font-semibold mt-6 md:mt-0 group"
           >
             View All Products
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -112,54 +133,76 @@ export const FeaturedProducts = () => {
             <motion.div
               key={product.id}
               variants={cardVariants}
-              className="product-card group"
+              whileHover={{ y: -8 }}
+              className="group bg-card rounded-3xl overflow-hidden border border-border/50 shadow-soft hover:shadow-premium transition-all duration-500"
             >
               {/* Image Container */}
-              <div className="relative aspect-square overflow-hidden bg-muted/50">
-                <img
+              <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/50 to-muted">
+                <motion.img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.08 }}
+                  transition={{ duration: 0.5 }}
                 />
                 
+                {/* Discount Badge */}
+                <motion.div
+                  initial={{ rotate: -12 }}
+                  whileHover={{ rotate: 0, scale: 1.1 }}
+                  className="absolute top-4 left-4 px-3 py-1.5 bg-destructive text-destructive-foreground text-xs font-bold rounded-full"
+                >
+                  -{product.discount}%
+                </motion.div>
+
                 {/* Badge */}
                 {product.badge && (
-                  <span className="absolute top-4 left-4 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
+                  <span className="absolute top-4 right-4 px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
                     {product.badge}
                   </span>
                 )}
 
-                {/* Wishlist Button */}
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                >
-                  <Heart className="w-4 h-4 text-foreground" />
-                </motion.button>
-
-                {/* Quick Add */}
+                {/* Hover Actions */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileHover={{ opacity: 1, y: 0 }}
-                  className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4"
                 >
-                  <Button className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90">
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    Add to Cart
-                  </Button>
+                  <div className="flex gap-2">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="p-3 bg-white rounded-full shadow-lg"
+                    >
+                      <Heart className="w-4 h-4 text-foreground" />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="p-3 bg-white rounded-full shadow-lg"
+                    >
+                      <Eye className="w-4 h-4 text-foreground" />
+                    </motion.button>
+                    <Button className="flex-1 rounded-full">
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      Add to Cart
+                    </Button>
+                  </div>
                 </motion.div>
               </div>
 
               {/* Content */}
               <div className="p-5">
                 {/* Condition Tag */}
-                <span className="inline-block px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded-md mb-3">
+                <motion.span
+                  whileHover={{ scale: 1.05 }}
+                  className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full mb-3 cursor-pointer"
+                >
                   {product.condition}
-                </span>
+                </motion.span>
 
                 {/* Name & Specs */}
-                <h3 className="font-display font-semibold text-foreground text-lg mb-1 line-clamp-1">
+                <h3 className="font-display font-semibold text-foreground text-lg mb-1 line-clamp-1 group-hover:text-primary transition-colors">
                   {product.name}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-3">
@@ -175,7 +218,7 @@ export const FeaturedProducts = () => {
                     </span>
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    ({product.reviews})
+                    ({product.reviews} reviews)
                   </span>
                 </div>
 
